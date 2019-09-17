@@ -7,6 +7,9 @@
 		{
 			"path": "./packages/app_base"
 		},
+		{
+			"path": "./packages/app_ffi"
+		},
 	],
 	"settings": {}
 }
