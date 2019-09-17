@@ -1,0 +1,22 @@
+PODS:
+  - app_ffi (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - app_ffi (from `.symlinks/plugins/app_ffi/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
+
+EXTERNAL SOURCES:
+  app_ffi:
+    :path: ".symlinks/plugins/app_ffi/ios"
+  Flutter:
+    :path: ".symlinks/flutter/ios-release"
+
+SPEC CHECKSUMS:
+  app_ffi: ebe5317925241ab8bd6f2f3658784b6db09524bd
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: 10ae9c18d12c9ffc2275c9a159a3b1e281990db0
+
+COCOAPODS: 1.7.5
