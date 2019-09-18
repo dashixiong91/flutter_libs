@@ -7,7 +7,10 @@ THIS_DIR="$(cd "$(if [[ "${0:0:1}" == "/" ]]; then echo "$(dirname $0)";else ech
 FLUTTER_ENGINE_DIR="$FLUTTER_ROOT/bin/cache/artifacts/engine"
 FLUTTER_ENGINE_JAR="$FLUTTER_ENGINE_DIR/android-arm/flutter.jar"
 PROJECT_DIR="$THIS_DIR"
+PROJECT_LIBS_DIR="${PROJECT_DIR}/libs"
 
-cp -f ${FLUTTER_ENGINE_JAR} ${PROJECT_DIR}/libs
+rm -rf ${PROJECT_LIBS_DIR}
+mkdir -p ${PROJECT_LIBS_DIR}
+cp -f ${FLUTTER_ENGINE_JAR} ${PROJECT_LIBS_DIR}
 
 gradle build
