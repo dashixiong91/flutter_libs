@@ -6,7 +6,7 @@ A Flutter app ffi project
 
 1. android环境准备
 
-- 安装android sdk
+- 安装android sdk (必选：ndk、cmake)
 - 设置环境变量ANDROID_HOME （eg: `export ANDROID_HOME=/opt/android-sdk-macosx`）
 - 设置环境变量ANDROID_NDK_HOME （eg: `export ANDROID_NDK_HOME=/opt/android-sdk-macosx/ndk/20.0.5594570`）
 
