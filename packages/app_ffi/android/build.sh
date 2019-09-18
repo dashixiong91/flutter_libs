@@ -8,9 +8,12 @@ FLUTTER_ENGINE_DIR="$FLUTTER_ROOT/bin/cache/artifacts/engine"
 FLUTTER_ENGINE_JAR="$FLUTTER_ENGINE_DIR/android-arm/flutter.jar"
 PROJECT_DIR="$THIS_DIR"
 PROJECT_LIBS_DIR="${PROJECT_DIR}/libs"
+BUILD_DIR="$PROJECT_DIR/../build/android"
 
 rm -rf ${PROJECT_LIBS_DIR}
 mkdir -p ${PROJECT_LIBS_DIR}
 cp -f ${FLUTTER_ENGINE_JAR} ${PROJECT_LIBS_DIR}
 
-gradle build
+pushd ${PROJECT_DIR}
+gradle -PbuildDir=${BUILD_DIR} build
+popd

@@ -27,7 +27,9 @@ function build_cmake() {
 }
 
 function build_framework() {
+  pushd "${BUILD_DIR}"
   cmake --build ${BUILD_DIR} --config Release --target install
+  popd
 }
 
 FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
