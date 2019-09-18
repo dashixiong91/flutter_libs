@@ -18,7 +18,7 @@ rootProject.allprojects {
         jcenter()
     }
 }
-rootProject.buildDir = "../build/android"
+project.buildDir = "../build/android"
 
 apply plugin: 'com.android.library'
 
