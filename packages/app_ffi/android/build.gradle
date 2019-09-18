@@ -21,6 +21,8 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 
+apply from: './ffi.gradle'
+
 android {
     compileSdkVersion 28
 
