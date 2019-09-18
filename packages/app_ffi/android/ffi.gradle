@@ -44,7 +44,7 @@ class FlutterFFIPlugin implements Plugin<Project> {
             // cmake.path
             externalNativeBuild {
                 cmake.setPath(new File(project.getProjectDir(), '../cpp/CMakeLists.txt'))
-                cmake.setBuildStagingDirectory(new File(buildDir, '../' + buildDir.getName() + 'NativeBuild'))
+                cmake.setBuildStagingDirectory(new File(buildDir, '../' + buildDir.getName() + '_native_build'))
             }
 
             buildTypes {
