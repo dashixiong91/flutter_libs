@@ -32,18 +32,19 @@ class FlutterFFIPlugin implements Plugin<Project> {
         Project rootProject = project.getRootProject()
         File buildDir = project.getBuildDir()
 
-        List<String> abiFilters = getABIs(project)
+        List<String> buildAbiFilters = getABIs(project)
 
         Boolean isSplitPerAbi = isSplitPerAbi(project)
 
         project.android {
             // ndk.abiFilters
             defaultConfig {
-                !isSplitPerAbi && ndk.setAbiFilters(abiFilters)
+                !isSplitPerAbi && ndk.setAbiFilters(buildAbiFilters)
             }
             // cmake.path
             externalNativeBuild {
                 cmake.setPath(new File(project.getProjectDir(), '../cpp/CMakeLists.txt'))
+                
                 cmake.setBuildStagingDirectory(new File(buildDir, '../' + buildDir.getName() + '_native_build'))
             }
 
@@ -52,7 +53,7 @@ class FlutterFFIPlugin implements Plugin<Project> {
                     initWith debug
                     if (!isSplitPerAbi) {
                         ndk {
-                            abiFilter ARCH_X86
+                            abiFilters ARCH_ARM32, ARCH_X86
                         }
                     }
                 }
