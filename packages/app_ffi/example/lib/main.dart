@@ -1,56 +1,110 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
-import 'package:app_ffi/app_ffi.dart';
+import 'package:flutter/widgets.dart';
+import 'package:app_ffi/app_ffi.dart' as appFfi;
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomePage(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-
+class HomePage extends StatefulWidget {
   @override
-  void initState() {
-    super.initState();
-    initPlatformState();
-  }
+  State<StatefulWidget> createState() => _HomePageState();
+}
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await AppFfi.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+class _HomePageState extends State<HomePage> {
+  final List<String> _logs = <String>[];
+  final ScrollController _scrollController = ScrollController();
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+  Widget _buildLogWidget() {
+    List<Widget> logTextList = _logs.map<Widget>((String text) {
+      return Text(
+        text,
+        textDirection: TextDirection.ltr,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+          inherit: false,
+        ),
+      );
+    }).toList();
+    Widget logWidget = ListView(
+      padding: EdgeInsets.all(0),
+      controller: _scrollController,
+      children: logTextList,
+    );
+    return logWidget;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(appFfi.LIBRARY_NAME),
+      ),
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+        child: Column(
+          children: <Widget>[
+            RaisedButton(
+              child: Text('invoke .add'),
+              onPressed: _onPressed,
+            ),
+            Expanded(
+              flex: 1,
+              child: _buildLogWidget(),
+            )
+          ],
         ),
       ),
     );
+  }
+
+  void _onPressed() {
+    // 初始化dl动态库
+    DateTime start = DateTime.now();
+    appFfi.init();
+    int spend = DateTime.now().difference(start).inMilliseconds;
+    String log = 'load lib spend:${spend}ms';
+    _addLog(log);
+
+    Random random = Random.secure();
+    int a = random.nextInt(100);
+    int b = random.nextInt(100);
+    // 调用add函数
+    int result = appFfi.add(a, b);
+    log = 'c add:$a + $b = $result';
+    _addLog(log);
+  }
+
+  void _addLog(String log) {
+    assert(() {
+      debugPrint(log);
+      return true;
+    }());
+    if (_logs.length > 100) {
+      _logs.removeAt(0);
+    }
+    setState(() {
+      _logs.add(log);
+    });
+    _scrollToBottom();
+  }
+
+  void _scrollToBottom() {
+    Future<void>.delayed(Duration(milliseconds: 300), () {
+      double maxScrollHeight = _scrollController.position.maxScrollExtent;
+      if (_scrollController.position.pixels != maxScrollHeight) {
+        _scrollController.jumpTo(maxScrollHeight);
+      }
+    });
   }
 }

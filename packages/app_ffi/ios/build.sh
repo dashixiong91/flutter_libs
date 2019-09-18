@@ -37,11 +37,10 @@ function move_to_app_frameworks() {
   echo 'TODO '
 }
 
-PLUGIN_DIR=`normalize_dir "$THIS_DIR/../"`
-FLUTTER_PROJECT_ROOT=${FLUTTER_PROJECT_ROOT:-`normalize_dir $PLUGIN_DIR/../../../../`}
-IOS_PROJECT_ROOT="$FLUTTER_PROJECT_ROOT/ios"
+PLUGIN_PROJECT_DIR=`normalize_dir "$THIS_DIR/../"`
+FLUTTER_PROJECT_ROOT=${FLUTTER_PROJECT_ROOT:-`normalize_dir $PLUGIN_PROJECT_DIR/../../../../`}
 BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ffi/$PROJECT_NAME"
-CMAKE_DIR="$PLUGIN_DIR/cpp"
+CMAKE_DIR="$PLUGIN_PROJECT_DIR/cpp"
 
 function main() {
     clean
