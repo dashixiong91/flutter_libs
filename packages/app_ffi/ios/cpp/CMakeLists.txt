@@ -10,7 +10,7 @@ endif()
 project(app_ffi)
 
 # Specifies a path to native header files.
-include_directories(include/)
+include_directories(includes/)
 
 # Specifies a path to native source files and stores it in the variable ${SOURCE_SRC}.
 AUX_SOURCE_DIRECTORY(src/ SOURCE_SRC)
