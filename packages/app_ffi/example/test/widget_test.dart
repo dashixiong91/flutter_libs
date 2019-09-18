@@ -7,19 +7,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:app_ffi_example/main.dart';
+import 'package:app_ffi/app_ffi.dart' as appFfi;
 
 void main() {
-  testWidgets('Verify Platform version', (WidgetTester tester) async {
+  testWidgets('Verify app start', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp());
 
-    // Verify that platform version is retrieved.
     expect(
       find.byWidgetPredicate(
         (Widget widget) => widget is Text &&
-                           widget.data.startsWith('Running on:'),
+                           widget.data.startsWith(appFfi.LIBRARY_NAME),
       ),
       findsOneWidget,
     );

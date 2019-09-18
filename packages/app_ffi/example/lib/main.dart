@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(appFfi.LIBRARY_NAME),
+        title: Text('${appFfi.LIBRARY_NAME}_example'),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),

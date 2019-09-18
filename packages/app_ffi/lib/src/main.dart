@@ -7,14 +7,14 @@ import './utils/dylib.dart';
 typedef NativeAddSign = Int32 Function(Int32, Int32);
 typedef DartAddSign = int Function(int, int);
 
-DynamicLibrary dl;
+DynamicLibrary _dl;
 
 void init(){
-  dl=DynamicLibraryHelp.load(LIBRARY_NAME);
+  _dl=DynamicLibraryHelp.load(LIBRARY_NAME);
 }
 
 int add(int a,int b){
-  DartAddSign method=dl.lookupFunction<NativeAddSign, DartAddSign>("add");
+  DartAddSign method=_dl.lookupFunction<NativeAddSign, DartAddSign>("add");
   return method(a,b);
 }
 

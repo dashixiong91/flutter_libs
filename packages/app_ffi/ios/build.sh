@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-
+# 此脚本可以单独构建.framework文件
 set -e
-
-PROJECT_NAME="app_ffi"
 
 THIS_DIR="$(cd "$(if [[ "${0:0:1}" == "/" ]]; then echo "$(dirname $0)";else echo "$PWD/$(dirname $0)";fi)"; pwd)"
 
@@ -32,15 +30,9 @@ function build_framework() {
   cmake --build ${BUILD_DIR} --config Release --target install
 }
 
-function move_to_app_frameworks() {
-  # TODO move *.framework to Runner.app/Frameworks
-  echo 'TODO '
-}
-
-PLUGIN_PROJECT_DIR=`normalize_dir "$THIS_DIR/../"`
-FLUTTER_PROJECT_ROOT=${FLUTTER_PROJECT_ROOT:-`normalize_dir $PLUGIN_PROJECT_DIR/../../../../`}
-BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ffi/$PROJECT_NAME"
-CMAKE_DIR="$PLUGIN_PROJECT_DIR/cpp"
+FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
+BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ios"
+CMAKE_DIR="$FLUTTER_PROJECT_ROOT/cpp"
 
 function main() {
     clean

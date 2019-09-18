@@ -7,7 +7,7 @@ else()
 cmake_minimum_required(VERSION 3.10)
 endif()
 # set project name
-project(app-ffi)
+project(app_ffi)
 
 # Specifies a path to native header files.
 include_directories(include/)
