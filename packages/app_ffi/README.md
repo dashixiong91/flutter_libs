@@ -28,14 +28,17 @@ dependencies:
 
 ## For FFI Lib Developer
 
-4. build ios app_ffi.framework
+1. in addition to the other env above
+- gradle (`brew install gradle`)
+
+2. build ios app_ffi.framework
 
 ```
 ./ios/build.sh
 # output to ./build/ios
 ```
 
-5. build android app_ffi.aar
+3. build android app_ffi.aar
 
 ```
 ./android/build.sh
