@@ -40,6 +40,7 @@ function main() {
     clean
     build_cmake
     build_framework
+    echo "BUILD SUCCESSFUL (IOS)       ========="
 }
 
 main "$@"

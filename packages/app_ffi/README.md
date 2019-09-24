@@ -6,7 +6,7 @@ A flutter-ffi template.
 
 1. env for android
 
-- android sdk (ndk、cmake...)
+- android sdk (ndk >= 20.0.5594570、cmake >= 3.10.2.4988404 ...)
 - environment variable ANDROID_HOME （eg: `export ANDROID_HOME=/opt/android-sdk-macosx`）
 - environment variable ANDROID_NDK_HOME （eg: `export ANDROID_NDK_HOME=/opt/android-sdk-macosx/ndk/20.0.5594570`）
 
@@ -28,17 +28,14 @@ dependencies:
 
 ## For FFI Lib Developer
 
-1. in addition to the other env above
-- gradle (`brew install gradle`)
-
-2. build ios app_ffi.framework
+1. build ios app_ffi.framework
 
 ```
 ./ios/build.sh
 # output to ./build/ios
 ```
 
-3. build android app_ffi.aar
+2. build android app_ffi.aar
 
 ```
 ./android/build.sh
