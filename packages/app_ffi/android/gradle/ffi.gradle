@@ -1,0 +1,18 @@
+apply plugin: FlutterFFIPlugin
+
+class FlutterFFIPlugin implements Plugin<Project> {
+    @Override
+    void apply(Project project) {
+        File buildDir = project.getBuildDir()
+        File buildNativeDir = new File(buildDir, '../' + buildDir.getName() + '_native_build')
+        File cmakeFile = new File(project.getProjectDir(), '../cpp/CMakeLists.txt')
+
+        project.android {
+            // cmake.path
+            externalNativeBuild {
+                cmake.setPath(cmakeFile)
+                cmake.setBuildStagingDirectory(buildNativeDir)
+            }
+        }
+    }
+}

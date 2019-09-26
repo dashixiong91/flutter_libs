@@ -12,6 +12,10 @@ buildscript {
     }
 }
 
+if(rootProject == project){
+    rootProject.buildDir = '../build/android'
+}
+
 rootProject.allprojects {
     repositories {
         google()
@@ -20,8 +24,8 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
-
-apply from: './ffi.gradle'
+apply from: './gradle/flutter-platform.gradle'
+apply from: './gradle/ffi.gradle'
 
 android {
     compileSdkVersion 28
