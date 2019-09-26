@@ -9,6 +9,10 @@ function normalize_dir() {
   echo "$(cd ${dir};pwd)"
 }
 
+FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
+BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ios"
+CMAKE_DIR="$FLUTTER_PROJECT_ROOT/cpp"
+
 function clean() {
   rm -rf ${BUILD_DIR}
   mkdir -p ${BUILD_DIR}
@@ -31,10 +35,6 @@ function build_framework() {
   cmake --build ${BUILD_DIR} --config Release --target install
   popd
 }
-
-FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
-BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ios"
-CMAKE_DIR="$FLUTTER_PROJECT_ROOT/cpp"
 
 function main() {
     clean

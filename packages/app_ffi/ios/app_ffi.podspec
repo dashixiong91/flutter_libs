@@ -8,11 +8,11 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 A Flutter app ffi project
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/xinfeng-tech/flutter_libs/tree/master/packages/app_ffi'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Meituan' => '616782041@qq.com' }
   s.source           = { :path => '.' }
-  s.source_files =  ['Classes/**/*', 'cpp/**/*.{h,c}']
+  s.source_files =  ['Classes/**/*', 'cpp/**/*.{h,c,cc}']
   s.public_header_files = ['Classes/**/*.h']
   s.dependency 'Flutter'
 

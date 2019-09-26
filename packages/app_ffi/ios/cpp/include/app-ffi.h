@@ -2,10 +2,19 @@
 // Created by xinfeng on 2019-09-16.
 //
 
-#ifndef TEST_DEMO_TEST_H
-#define TEST_DEMO_TEST_H
+#ifndef APP_FFI_H
+#define APP_FFI_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 int add(int a,int b);
 
-#endif //TEST_DEMO_TEST_H
+
+#ifdef __cplusplus
+}
+#endif
+#endif //APP_FFI_H
 
