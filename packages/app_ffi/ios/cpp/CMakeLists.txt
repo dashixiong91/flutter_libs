@@ -1,11 +1,12 @@
 # Sets the minimum version of CMake required to build your native library.
 # This ensures that a certain set of CMake features is available to
 # your build.
-if(CMAKE_GENERATOR STREQUAL "Xcode")
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 cmake_minimum_required(VERSION 3.15)
 else()
 cmake_minimum_required(VERSION 3.10)
 endif()
+
 # set project name
 project(app_ffi)
 
@@ -22,14 +23,17 @@ AUX_SOURCE_DIRECTORY(src/ SOURCE_SRC)
 # automatically packages shared libraries with your APK.
 add_library(${PROJECT_NAME} SHARED ${SOURCE_SRC})
 
-# (only xcode)
-if(CMAKE_GENERATOR STREQUAL "Xcode")
+
+# (only for ios)!!!
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+# normal iOS IDENTIFIER
+string(REPLACE "_" "-" IDENTIFIER "com.xin1t.${PROJECT_NAME}")
 # wrap in xxx.framework 
 set_target_properties(${PROJECT_NAME}
   PROPERTIES
   FRAMEWORK TRUE
   FRAMEWORK_VERSION A
-  MACOSX_FRAMEWORK_IDENTIFIER com.xin1t.${PROJECT_NAME}
+  MACOSX_FRAMEWORK_IDENTIFIER ${IDENTIFIER}
 )
 # add install target 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
