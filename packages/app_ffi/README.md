@@ -1,6 +1,6 @@
 # app_ffi
 
-A flutter-ffi template.
+A flutter-ffi template,provide flutter-ffi template code in Flutter (c/c++ build and dart wrapper)
 
 ## Getting Started
 

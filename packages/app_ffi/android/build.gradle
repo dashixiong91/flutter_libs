@@ -1,5 +1,5 @@
 group 'com.xin1t.app_ffi'
-version '1.0'
+version '1.0.0'
 
 buildscript {
     repositories {
