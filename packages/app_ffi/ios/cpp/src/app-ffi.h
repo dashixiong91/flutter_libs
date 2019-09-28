@@ -10,8 +10,9 @@ extern "C" {
 #endif
 
 
-int add(int a,int b);
-
+namespace jsc{
+  int add(int,int);
+}
 
 #ifdef __cplusplus
 }
