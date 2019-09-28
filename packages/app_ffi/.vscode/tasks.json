@@ -8,13 +8,33 @@
         "-g",
         "${file}",
         "-o",
-        "${workspaceFolder}/build/${fileBasenameNoExtension}"
+        "${workspaceFolder}/build/${fileBasenameNoExtension}",
+        "-I",
+        "${workspaceFolder}/cpp/include"
       ],
       "options": {
         "cwd": "${workspaceFolder}",
       },
       "group": "build",
       "problemMatcher":"$gcc"
+    },
+    {
+      "type": "shell",
+      "label": "build cpp symbol",
+      "command":"nm",
+      "args": [
+        "-demangle",
+        "-extern-only",
+        "${workspaceFolder}/build/${fileBasenameNoExtension}"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "group": "build",
+      "problemMatcher":"$gcc",
+      "dependsOn":[
+        "build cpp file"
+      ]
     }
   ],
   "version": "2.0.0"
