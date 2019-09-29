@@ -21,7 +21,7 @@ function init_dependencies(){
   mkdir -p ${PROJECT_LIBS_DIR}
   local flutter_jar="$FLUTTER_ROOT/bin/cache/artifacts/engine/android-arm/flutter.jar"
   cp -f ${flutter_jar} ${PROJECT_LIBS_DIR}
-  echo -e "\033[36m INIT JSC:DEPENDENCY DONE (Android) ========= \033[0m"
+  echo -e "\033[36m INIT DEPENDENCY DONE (Android) ========= \033[0m"
 }
 
 function main(){
