@@ -10,15 +10,16 @@ function normalize_dir() {
 }
 
 FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
+PROJECT_DIR="$THIS_DIR"
 BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ios"
 CMAKE_DIR="$FLUTTER_PROJECT_ROOT/cpp"
 
 function clean() {
   rm -rf ${BUILD_DIR}
-  mkdir -p ${BUILD_DIR}
 }
 
 function build_cmake() {
+      mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
       -DCMAKE_SYSTEM_NAME=iOS \
@@ -30,17 +31,52 @@ function build_cmake() {
       popd
 }
 
-function build_framework() {
+# @Deprecated
+function build_framework_by_cmake() {
+  build_cmake
   pushd "${BUILD_DIR}"
   cmake --build ${BUILD_DIR} --config Release --target install
   popd
 }
-
-function main() {
-    clean
-    build_cmake
-    build_framework
-    echo "BUILD SUCCESSFUL (IOS)       ========="
+function build_framework_by_pod() {
+  local pod_build_out_file="${TMPDIR}/app_ffi/pod_build_out.log";
+  mkdir -p `dirname ${pod_build_out_file}`
+  pushd "${PROJECT_DIR}"
+    pod lib lint --verbose | tee "${pod_build_out_file}"
+    if [[ ! -f ${pod_build_out_file} ]];then
+      echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
+      exit 1
+    fi
+    local build_temp_dir=`cat ${pod_build_out_file} | grep 'CreateBuildDirectory' | grep 'Products' | awk '{print $2}'`
+    if [[ ! -d ${build_temp_dir} ]];then
+      echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
+      exit 1
+    fi
+    echo -e "\033[32m INFO: pod build temp to:${build_temp_dir} \033[0m"
+    cp -r ${build_temp_dir} ${BUILD_DIR}
+    mv ${pod_build_out_file} ${BUILD_DIR}
+  popd
 }
 
+function build_framework() {
+  local build_type="$1"
+  if [[ "${build_type}" == "cmake" ]];then
+    build_framework_by_cmake
+  else
+    build_framework_by_pod
+  fi
+}
+
+function main(){
+  local cmd args
+  cmd="$1"
+  args="${@#$cmd}"
+  clean
+  case ${cmd} in
+      "build"|*)
+        build_framework ${args}
+        echo -e "\033[36m BUILD SUCCESSFUL (iOS) ========= \033[0m"
+      ;;
+  esac
+}
 main "$@"

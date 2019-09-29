@@ -21,7 +21,7 @@ function init_dependencies(){
   mkdir -p ${PROJECT_LIBS_DIR}
   local flutter_jar="$FLUTTER_ROOT/bin/cache/artifacts/engine/android-arm/flutter.jar"
   cp -f ${flutter_jar} ${PROJECT_LIBS_DIR}
-  echo "INIT JSC:DEPENDENCY DONE (ANDROID)   ========="
+  echo -e "\033[36m INIT JSC:DEPENDENCY DONE (Android) ========= \033[0m"
 }
 
 function main(){
@@ -31,12 +31,12 @@ function main(){
   clean
   case ${cmd} in
       "init_dependencies")
-        init_dependencies $args
+        init_dependencies ${args}
       ;;
       "build"|*)
-        init_dependencies $args
+        init_dependencies ${args}
         build_aar
-        echo "BUILD SUCCESSFUL (ANDROID)   ========="
+        echo -e "\033[36m BUILD SUCCESSFUL (Android) ========= \033[0m"
       ;;
   esac
 }

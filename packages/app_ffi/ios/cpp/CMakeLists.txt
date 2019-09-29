@@ -1,3 +1,4 @@
+# CMakeLists.txt(For Android and iOS !!!)
 # Sets the minimum version of CMake required to build your native library.
 # This ensures that a certain set of CMake features is available to
 # your build.
@@ -28,7 +29,7 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_SRC})
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 # normal iOS IDENTIFIER
 string(REPLACE "_" "-" IDENTIFIER "com.xin1t.${PROJECT_NAME}")
-# wrap in xxx.framework 
+# wrap in ${PROJECT_NAME}.framework 
 set_target_properties(${PROJECT_NAME}
   PROPERTIES
   FRAMEWORK TRUE
