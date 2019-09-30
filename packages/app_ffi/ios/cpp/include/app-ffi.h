@@ -9,9 +9,10 @@
 extern "C" {
 #endif
 
-namespace jsc {
 int add(int, int);
-}
+
+class Box;
+
 
 #ifdef __cplusplus
 }

@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           children: <Widget>[
             RaisedButton(
-              child: Text('invoke .add'),
+              child: Text('invoke native.method'),
               onPressed: _onPressed,
             ),
             Expanded(
@@ -69,20 +69,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onPressed() {
-    // 初始化dl动态库
-    DateTime start = DateTime.now();
-    appFfi.init();
-    int spend = DateTime.now().difference(start).inMilliseconds;
-    String log = 'load lib spend:${spend}ms';
-    _addLog(log);
+    // _addMethod();
+    // _mainMethod();
+    _boxClass();
 
+  }
+  void _boxClass(){
+    appFfi.Box box=appFfi.Box(1,2,3);
+    _addLog("box.getVolume()=>${box.getVolume()}");
+  }
+  void _mainMethod(){
+    appFfi.main();
+  }
+  void _addMethod(){
     Random random = Random.secure();
     int a = random.nextInt(100);
     int b = random.nextInt(100);
     // 调用add函数
     int result = appFfi.add(a, b);
-    log = 'c add:$a + $b = $result';
-    _addLog(log);
+    _addLog("add($a,$b)=> $result");
   }
 
   void _addLog(String log) {

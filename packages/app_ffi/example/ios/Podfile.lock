@@ -1,5 +1,5 @@
 PODS:
-  - app_ffi (0.0.1):
+  - app_ffi (1.0.0):
     - Flutter
   - Flutter (1.0.0)
 
@@ -14,7 +14,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/flutter/ios"
 
 SPEC CHECKSUMS:
-  app_ffi: c734b6cc53a239b3d983a2c106cbf0584c8e4121
+  app_ffi: 4c354afdf597de69052c8ce413454f5888168f03
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
 
 PODFILE CHECKSUM: 10ae9c18d12c9ffc2275c9a159a3b1e281990db0

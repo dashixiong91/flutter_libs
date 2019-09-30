@@ -1,20 +1,44 @@
 import 'dart:ffi';
+import 'package:flutter/foundation.dart';
+
 import './utils/config.dart';
 import './utils/dylib.dart';
 
-/// 根据C中的函数来定义方法签名（所谓方法签名，就是对一个方法或函数的描述，包括返回值类型，形参类型）
-/// 这里需要定义两个方法签名，一个是C语言中的，一个是转换为Dart之后的
-typedef NativeAddSign = Int32 Function(Int32, Int32);
-typedef DartAddSign = int Function(int, int);
+DynamicLibrary lib = () {
+  return DynamicLibraryHelp.load(LIBRARY_NAME);
+}();
 
-DynamicLibrary _dl;
+typedef _add_native_t = Int32 Function(Int32, Int32);
+int Function(int a,int b) add=lib.lookup<NativeFunction<_add_native_t>>("add").asFunction();
 
-void init(){
-  _dl=DynamicLibraryHelp.load(LIBRARY_NAME);
+
+typedef _main_native_t = Int32 Function();
+int Function() main = lib.lookup<NativeFunction<_main_native_t>>("main").asFunction();
+
+
+typedef _box_constructor_native_t = Void Function(Double, Double, Double);
+typedef _box_constructor_dart_t = void Function(double, double, double);
+
+class BoxClass extends Struct<BoxClass>{
+  @Double()
+  double length;
+  @Double()
+  double width;
+  @Double()
+  double height; 
 }
 
-int add(int a,int b){
-  DartAddSign method=_dl.lookupFunction<NativeAddSign, DartAddSign>("add");
-  return method(a,b);
+class Box{
+  Box(double length, double width, double height) {
+    try {
+      Function constructor=lib.lookupFunction<_box_constructor_native_t,_box_constructor_dart_t>('_ZN3BoxC1Eddd');
+      debugPrint('$constructor');
+    } catch (exception, stack) {
+      debugPrint('1');
+    }
+  }
+  double getVolume() {
+    Function method=lib.lookup<NativeFunction<_box_constructor_native_t>>('_ZN3Box9getVolumeEv').asFunction();
+    return 0;
+  }
 }
-
