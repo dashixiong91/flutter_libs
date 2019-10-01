@@ -13,7 +13,7 @@ function clean(){
 function build_test(){
   mkdir -p ${BUILD_DIR}
   pushd ${THIS_DIR}
-    for file in `ls -1A *.cc`
+    for file in `ls -1A *_test.cc`
     do
       local base_name=`echo ${file} | awk -F '.' '{print $1}'`
       local out_file="${BUILD_DIR}/${base_name}.out"
