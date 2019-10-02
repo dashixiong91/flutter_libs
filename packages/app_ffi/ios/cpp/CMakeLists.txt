@@ -15,7 +15,7 @@ project(app_ffi)
 include_directories(include/)
 
 # Specifies a path to native source files and stores it in the variable ${SOURCE_SRC}.
-AUX_SOURCE_DIRECTORY(src/ SOURCE_SRC)
+aux_source_directory(src/ SOURCE_SRC)
 
 # Specifies a library name, specifies whether the library is STATIC or
 # SHARED, and provides relative paths to the source code. You can
