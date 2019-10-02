@@ -12,8 +12,8 @@ Provide flutter-ffi template code in Flutter (c/c++ build and dart wrapper)
   s.license          = { :type => "MIT", :file => '../../../LICENSE' }
   s.author           = { 'Meituan' => '616782041@qq.com' }
   s.source           = { :git => 'https://github.com/xinfeng-tech/flutter_libs.git',:tag => "v#{s.version}"  }
-  s.source_files =  ['Classes/**/*', 'cpp/**/*.{h,c,cc}']
-  s.public_header_files = ['Classes/**/*.h']
+  s.source_files =  ['Classes/**/*', 'cpp/src/**/*.{h,c,cc}','cpp/include/*.h']
+  s.public_header_files = ['Classes/**/*.h','cpp/include/*.h']
   s.dependency 'Flutter'
 
   s.ios.deployment_target = '8.0'

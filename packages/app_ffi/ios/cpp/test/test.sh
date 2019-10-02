@@ -23,8 +23,14 @@ function build_test(){
       if [[ ! -f ${out_file} ]];then
         echo -e "\033[31m test[${file}]: not pass! \033[0m"
       else
+        set +e
         ${out_file}
+        if [[ $? != 0 ]];then
+          echo -e "\033[31m test[${file}]: not pass! \033[0m"
+          exit 1
+        fi
         echo -e "\033[32m test[${file}]: pass! \033[0m"
+        set -e
       fi
     done
   popd
