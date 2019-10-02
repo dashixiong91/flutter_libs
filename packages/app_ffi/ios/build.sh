@@ -52,6 +52,11 @@ function build_framework_by_pod() {
       echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
       exit 1
     fi
+    local build_success_flag=`cat ${pod_build_out_file} | grep 'passed validation'`
+    if [[ -z ${build_success_flag} ]];then
+      echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
+      exit 1
+    fi
     echo -e "\033[32m INFO: pod build temp to:${build_temp_dir} \033[0m"
     cp -r ${build_temp_dir} ${BUILD_DIR}
     mv ${pod_build_out_file} ${BUILD_DIR}
