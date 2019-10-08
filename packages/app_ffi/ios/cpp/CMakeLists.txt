@@ -15,7 +15,7 @@ project(app_ffi)
 include_directories(include/)
 
 # Specifies a path to native source files and stores it in the variable ${SOURCE_SRC}.
-AUX_SOURCE_DIRECTORY(src/ SOURCE_SRC)
+aux_source_directory(src/ SOURCE_SRC)
 
 # Specifies a library name, specifies whether the library is STATIC or
 # SHARED, and provides relative paths to the source code. You can
@@ -24,7 +24,10 @@ AUX_SOURCE_DIRECTORY(src/ SOURCE_SRC)
 # automatically packages shared libraries with your APK.
 add_library(${PROJECT_NAME} SHARED ${SOURCE_SRC})
 
-
+# (only for android)!!!
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+get_filename_component(ANDROID_PROJECT_DIR ${CMAKE_HOME_DIRECTORY}/../android ABSOLUTE)
+endif()
 # (only for ios)!!!
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 # normal iOS IDENTIFIER
@@ -36,6 +39,6 @@ set_target_properties(${PROJECT_NAME}
   FRAMEWORK_VERSION A
   MACOSX_FRAMEWORK_IDENTIFIER ${IDENTIFIER}
 )
-# add install target 
+# install ${PROJECT_NAME}.framework 
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 endif()
