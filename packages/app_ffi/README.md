@@ -6,6 +6,7 @@ A flutter-ffi template,provide flutter-ffi template code in Flutter (c/c++ build
 
 1. env for android
 
+- jdk 1.8 (expect $JAVA_HOME in env and java command in $PATH)
 - android sdk (ndk >= 20.0.5594570、cmake >= 3.10.2.4988404 ...)
 - environment variable ANDROID_HOME （eg: `export ANDROID_HOME=/opt/android-sdk-macosx`）
 - environment variable ANDROID_NDK_HOME （eg: `export ANDROID_NDK_HOME=/opt/android-sdk-macosx/ndk/20.0.5594570`）
