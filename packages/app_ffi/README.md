@@ -13,7 +13,7 @@ A flutter-ffi template,provide flutter-ffi template code in Flutter (c/c++ build
 
 2. env for ios
 
-- xcode
+- xcode (>= 11.1)
 - cmake (`brew install cmake`)
 
 3. add dependencie for your app
