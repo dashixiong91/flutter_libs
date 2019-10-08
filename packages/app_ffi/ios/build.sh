@@ -41,8 +41,9 @@ function build_framework_by_cmake() {
 function build_framework_by_pod() {
   local pod_build_out_file="${TMPDIR}/app_ffi/pod_build_out.log";
   mkdir -p `dirname ${pod_build_out_file}`
+  local flutter_podspec="$FLUTTER_ROOT/bin/cache/artifacts/engine/ios/*.podspec"
   pushd "${PROJECT_DIR}"
-    pod lib lint --verbose --allow-warnings | tee "${pod_build_out_file}"
+    pod lib lint --verbose --allow-warnings --include-podspecs="${flutter_podspec}" | tee "${pod_build_out_file}"
     if [[ ! -f ${pod_build_out_file} ]];then
       echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
       exit 1
