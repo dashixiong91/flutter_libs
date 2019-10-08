@@ -4,6 +4,8 @@ set -e
 
 THIS_DIR="$(cd "$(if [[ "${0:0:1}" == "/" ]]; then echo "$(dirname $0)";else echo "$PWD/$(dirname $0)";fi)"; pwd)"
 
+FLUTTER_BIN_PATH="$(command -v flutter 2>&1 || { echo >&2 "Error: Flutter SDK is not installed!!!."; exit 1; })"
+FLUTTER_ROOT="${FLUTTER_ROOT:-$(dirname $(dirname $FLUTTER_BIN_PATH))}"
 PROJECT_DIR="$THIS_DIR"
 PROJECT_LIBS_DIR="${PROJECT_DIR}/libs"
 BUILD_DIR="$PROJECT_DIR/../build/android"

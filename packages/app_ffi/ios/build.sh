@@ -9,6 +9,8 @@ function normalize_dir() {
   echo "$(cd ${dir};pwd)"
 }
 
+FLUTTER_BIN_PATH="$(command -v flutter 2>&1 || { echo >&2 "Error: Flutter SDK is not installed!!!."; exit 1; })"
+FLUTTER_ROOT="${FLUTTER_ROOT:-$(dirname $(dirname $FLUTTER_BIN_PATH))}"
 FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
 PROJECT_DIR="$THIS_DIR"
 BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ios"
