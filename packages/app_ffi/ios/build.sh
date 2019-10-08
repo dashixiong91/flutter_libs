@@ -58,6 +58,7 @@ function build_framework_by_pod() {
       exit 1
     fi
     echo -e "\033[32m INFO: pod build temp to:${build_temp_dir} \033[0m"
+    mkdir -p `dirname ${BUILD_DIR}`
     cp -r ${build_temp_dir} ${BUILD_DIR}
     mv ${pod_build_out_file} ${BUILD_DIR}
   popd
