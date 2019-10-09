@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:app_ffi/app_ffi.dart' as appFfi;
+import 'package:app_ffi/app_ffi.dart';
+import 'utils.dart';
 
-// TODO: mock load dy lib
 void main() {
-  /* setUp(() {
-    appFfi.init();
+  setUp(() {
+    DynamicLibraryHelp.libLoader = testLoader;
   });
   test('add method', () async {
-    expect(appFfi.add(1, 2), 3);
-  }); */
+    expect(add(1, 2), 3);
+  });
 }

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:app_ffi/app_ffi.dart' as appFfi;
+import 'package:app_ffi/app_ffi.dart' as appFFI;
 
 void main() => runApp(MyApp());
 
@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
   }
    @override
   Widget build(BuildContext context) {
-    return buildPageWidget('${appFfi.LIBRARY_NAME}_example', tools: <Widget>[
+    return buildPageWidget('${appFFI.LIBRARY_NAME}_example', tools: <Widget>[
       RaisedButton(
         child: Text('invoke c++.add'),
         onPressed: _onPressed,
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
     int a = random.nextInt(100);
     int b = random.nextInt(100);
     // 调用add函数
-    int result = appFfi.add(a, b);
+    int result = appFFI.add(a, b);
     _addLog("add($a,$b)=> $result");
   }
 

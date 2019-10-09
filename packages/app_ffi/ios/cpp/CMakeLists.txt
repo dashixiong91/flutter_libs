@@ -2,7 +2,7 @@
 # Sets the minimum version of CMake required to build your native library.
 # This ensures that a certain set of CMake features is available to
 # your build.
-if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS" OR TARGET_SYSTEM_NAME STREQUAL "macOS")
 cmake_minimum_required(VERSION 3.15)
 else()
 cmake_minimum_required(VERSION 3.10)
@@ -28,8 +28,12 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_SRC})
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 get_filename_component(ANDROID_PROJECT_DIR ${CMAKE_HOME_DIRECTORY}/../android ABSOLUTE)
 endif()
-# (only for ios)!!!
-if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+# (only for macos)!!!
+if(TARGET_SYSTEM_NAME STREQUAL "macOS")
+message(DEBUG ${TARGET_SYSTEM_NAME})
+endif()
+# (for ios or macos)!!!
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS" OR TARGET_SYSTEM_NAME STREQUAL "macOS")
 # normal iOS IDENTIFIER
 string(REPLACE "_" "-" IDENTIFIER "com.xin1t.${PROJECT_NAME}")
 # wrap in ${PROJECT_NAME}.framework 

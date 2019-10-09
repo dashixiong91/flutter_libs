@@ -13,14 +13,14 @@ FLUTTER_BIN_PATH="$(command -v flutter 2>&1 || { echo >&2 "Error: Flutter SDK is
 FLUTTER_ROOT="${FLUTTER_ROOT:-$(dirname $(dirname $FLUTTER_BIN_PATH))}"
 FLUTTER_PROJECT_ROOT=`normalize_dir "$THIS_DIR/../"`
 PROJECT_DIR="$THIS_DIR"
-BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/ios"
+BUILD_DIR="$FLUTTER_PROJECT_ROOT/build/`echo ${3:-iOS} | tr 'A-Z' 'a-z'`"
 CMAKE_DIR="$FLUTTER_PROJECT_ROOT/cpp"
 
 function clean() {
   rm -rf ${BUILD_DIR}
 }
 
-function build_cmake() {
+function build_cmake_ios() {
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
@@ -32,10 +32,25 @@ function build_cmake() {
       -DCMAKE_IOS_INSTALL_COMBINED=YES
       popd
 }
+function build_cmake_macos() {
+      mkdir -p ${BUILD_DIR}
+      pushd "${BUILD_DIR}"
+      cmake -S "${CMAKE_DIR}" -GXcode  \
+      -DTARGET_SYSTEM_NAME=macOS \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
+      -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
+      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO
+      popd
+}
 
 # @Deprecated
 function build_framework_by_cmake() {
-  build_cmake
+  local build_target="$1"
+  if [[ "${build_target}" == "macOS" ]];then
+    build_cmake_macos
+  else
+    build_cmake_ios
+  fi
   pushd "${BUILD_DIR}"
   cmake --build ${BUILD_DIR} --config Release --target install
   popd
@@ -69,10 +84,13 @@ function build_framework_by_pod() {
 
 function build_framework() {
   local build_type="$1"
+  local build_target="${2:-iOS}"
   if [[ "${build_type}" == "cmake" ]];then
-    build_framework_by_cmake
+    build_framework_by_cmake ${build_target}
+    echo -e "\033[36m BUILD SUCCESSFUL (${build_target}) ========= \033[0m"
   else
-    build_framework_by_pod
+    build_framework_by_pod ${build_target}
+    echo -e "\033[36m BUILD SUCCESSFUL (iOS) ========= \033[0m"
   fi
 }
 
@@ -84,7 +102,6 @@ function main(){
   case ${cmd} in
       "build"|*)
         build_framework ${args}
-        echo -e "\033[36m BUILD SUCCESSFUL (iOS) ========= \033[0m"
       ;;
   esac
 }
