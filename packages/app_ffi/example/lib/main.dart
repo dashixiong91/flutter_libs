@@ -36,50 +36,68 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }).toList();
-    Widget logWidget = ListView(
+    Widget logList = ListView(
       padding: EdgeInsets.all(0),
       controller: _scrollController,
       children: logTextList,
     );
+    Widget logWidget = Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: logList,
+        ),
+        Row(
+          children: <Widget>[
+            RaisedButton(
+              child: Text('clear'),
+              onPressed: _clearLog,
+            ),
+          ],
+        )
+      ],
+    );
     return logWidget;
   }
-
-  @override
-  Widget build(BuildContext context) {
+    Widget buildPageWidget(String title, {List<Widget> tools}) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${appFfi.LIBRARY_NAME}_example'),
+        title: Text('$title'),
       ),
-      body: Container(
+      body: SafeArea(
+          child: Container(
         padding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
         child: Column(
           children: <Widget>[
-            RaisedButton(
-              child: Text('invoke native.method'),
-              onPressed: _onPressed,
+            Expanded(
+              flex: 0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: tools,
+              ),
             ),
             Expanded(
               flex: 1,
               child: _buildLogWidget(),
-            )
+            ),
           ],
         ),
-      ),
+      )),
     );
+  }
+   @override
+  Widget build(BuildContext context) {
+    return buildPageWidget('${appFfi.LIBRARY_NAME}_example', tools: <Widget>[
+      RaisedButton(
+        child: Text('invoke c++.add'),
+        onPressed: _onPressed,
+      ),
+    ]);
   }
 
   void _onPressed() {
-    // _addMethod();
-    // _mainMethod();
-    _boxClass();
-
-  }
-  void _boxClass(){
-    appFfi.Box box=appFfi.Box(1,2,3);
-    _addLog("box.getVolume()=>${box.getVolume()}");
-  }
-  void _mainMethod(){
-    appFfi.main();
+    _addMethod();
   }
   void _addMethod(){
     Random random = Random.secure();
@@ -103,7 +121,11 @@ class _HomePageState extends State<HomePage> {
     });
     _scrollToBottom();
   }
-
+  void _clearLog() {
+    setState(() {
+      _logs.clear();
+    });
+  }
   void _scrollToBottom() {
     Future<void>.delayed(Duration(milliseconds: 300), () {
       double maxScrollHeight = _scrollController.position.maxScrollExtent;
