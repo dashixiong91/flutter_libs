@@ -5,13 +5,13 @@ PODS:
 
 DEPENDENCIES:
   - app_ffi (from `.symlinks/plugins/app_ffi/ios`)
-  - Flutter (from `.symlinks/flutter/ios-release`)
+  - Flutter (from `.symlinks/flutter/ios`)
 
 EXTERNAL SOURCES:
   app_ffi:
     :path: ".symlinks/plugins/app_ffi/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios-release"
+    :path: ".symlinks/flutter/ios"
 
 SPEC CHECKSUMS:
   app_ffi: 4ae711ec29f6540f4aa3eefd0560b8235f99c953
