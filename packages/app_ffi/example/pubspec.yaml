@@ -1,5 +1,6 @@
 name: app_ffi_example
 description: Demonstrates how to use the app_ffi plugin.
+version: 1.0.0+1
 publish_to: 'none'
 
 environment:
