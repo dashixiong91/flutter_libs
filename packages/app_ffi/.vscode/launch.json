@@ -11,11 +11,11 @@
       "program": "example/lib/main.dart"
     },
     {
-      "name": "launch cpp build",
+      "name": "launch cpp test",
       "type": "cppdbg",
       "request": "launch",
-      "preLaunchTask": "build cpp file",
-      "program": "${workspaceFolder}/build/${fileBasenameNoExtension}",
+      "preLaunchTask": "build cpp test",
+      "program": "${workspaceFolder}/build/${workspaceFolderBasename}.out",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

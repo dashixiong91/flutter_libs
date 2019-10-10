@@ -2,15 +2,18 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "build cpp file",
+      "label": "build cpp test",
       "command": "/usr/bin/clang++",
       "args": [
         "-g",
-        "${file}",
-        "-o",
-        "${workspaceFolder}/build/${fileBasenameNoExtension}",
+        "${workspaceFolder}/cpp/test/app-ffi_test.cc",
+        "${workspaceFolder}/cpp/src/*.cc",
+        "-framework",
+        "JavaScriptCore",
         "-I",
-        "${workspaceFolder}/cpp/include"
+        "${workspaceFolder}/cpp/include",
+        "-o",
+        "${workspaceFolder}/build/${workspaceFolderBasename}.out",
       ],
       "options": {
         "cwd": "${workspaceFolder}",
@@ -18,24 +21,6 @@
       "group": "build",
       "problemMatcher":"$gcc"
     },
-    {
-      "type": "shell",
-      "label": "build cpp symbol",
-      "command":"nm",
-      "args": [
-        "-demangle",
-        "-extern-only",
-        "${workspaceFolder}/build/${fileBasenameNoExtension}"
-      ],
-      "options": {
-        "cwd": "${workspaceFolder}",
-      },
-      "group": "build",
-      "problemMatcher":"$gcc",
-      "dependsOn":[
-        "build cpp file"
-      ]
-    }
   ],
   "version": "2.0.0"
 }
