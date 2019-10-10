@@ -14,14 +14,11 @@
       "name": "launch cpp test",
       "type": "cppdbg",
       "request": "launch",
-      "preLaunchTask": "build cpp test",
+      // "preLaunchTask": "build cpp test",
       "program": "${workspaceFolder}/build/${workspaceFolderBasename}.out",
-      "args": [],
-      "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": false,
       "MIMode": "gdb",
+      "miDebuggerArgs": "-q",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",

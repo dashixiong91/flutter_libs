@@ -18,8 +18,11 @@
       "options": {
         "cwd": "${workspaceFolder}",
       },
-      "group": "build",
-      "problemMatcher":"$gcc"
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher":"$gcc",
     },
   ],
   "version": "2.0.0"
