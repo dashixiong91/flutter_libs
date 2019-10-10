@@ -62,17 +62,17 @@ function build_framework_by_pod() {
   pushd "${PROJECT_DIR}"
     pod lib lint --verbose --allow-warnings --include-podspecs="${flutter_podspec}" | tee "${pod_build_out_file}"
     if [[ ! -f ${pod_build_out_file} ]];then
-      echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
+      echo -e "\033[31m ERROR: build fail[1] (iOS)!!! \033[0m"
       exit 1
     fi
     local build_temp_dir=`cat ${pod_build_out_file} | grep 'CreateBuildDirectory' | grep 'Products' | awk '{print $2}'`
     if [[ ! -d ${build_temp_dir} ]];then
-      echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
+      echo -e "\033[31m ERROR: build fail[2] (iOS)!!! \033[0m"
       exit 1
     fi
     local build_success_flag=`cat ${pod_build_out_file} | grep 'passed validation'`
     if [[ -z ${build_success_flag} ]];then
-      echo -e "\033[31m ERROR: build fail (iOS)!!! \033[0m"
+      echo -e "\033[31m ERROR: build fail[3] (iOS)!!! \033[0m"
       exit 1
     fi
     echo -e "\033[32m INFO: pod build temp to:${build_temp_dir} \033[0m"
