@@ -19,7 +19,24 @@ CMAKE_DIR="$FLUTTER_PROJECT_ROOT/cpp"
 function clean() {
   rm -rf ${BUILD_DIR}
 }
-
+function get_codesign_id(){
+  if [[ ! -z $CODE_SIGN_IDENTITY ]];then
+    echo "$CODE_SIGN_IDENTITY"
+    return
+  fi
+  local cert_id=`security find-identity -p codesigning -v | grep 'Developer' | awk 'NR==1' | awk -F '[()]' '{print $3}'`
+  if [[ -z $cert_id ]];then
+    echo -e "\033[31m ERROR: can not find a valid Developer Cert !!! \033[0m"
+    exit 1
+  fi
+  local cert_content=`security find-certificate -c ${cert_id} -p`
+  local identity=`security find-certificate -c ${cert_id} -p | openssl x509 -subject | awk 'NR==1' | awk -F 'OU=' '{print $2}' | awk -F '/' '{print $1}'`
+  if [[ -z $identity ]];then
+    echo -e "\033[31m ERROR: can not find a IDENTITY to sign code !!! \033[0m"
+    exit 1
+  fi
+  echo "$identity"
+}
 function build_cmake_ios() {
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
@@ -33,13 +50,15 @@ function build_cmake_ios() {
       popd
 }
 function build_cmake_macos() {
+      local identity=`get_codesign_id`
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
       -DTARGET_SYSTEM_NAME=macOS \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
       -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
-      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO
+      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
       popd
 }
 
