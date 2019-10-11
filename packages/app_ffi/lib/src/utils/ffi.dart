@@ -8,5 +8,7 @@ ffi.Pointer<T> cast<T extends ffi.NativeType>(ffi.Pointer<ffi.NativeType> ptr) =
     ffi.Pointer<T>.fromAddress(ptr.address);
 
 /// Checks if a [ffi.Pointer] is not null.
-bool isNotNull(ffi.Pointer<dynamic> ptr) => ptr.address != ffi.nullptr.address;
+bool isNotNullPointer(ffi.Pointer<dynamic> ptr) => !isNullPointer(ptr);
+/// Checks if a [ffi.Pointer] is null.
+bool isNullPointer(ffi.Pointer<dynamic> ptr) => ptr.address == ffi.nullptr.address;
 
