@@ -1,16 +1,16 @@
-import 'dart:ffi';
+import 'dart:ffi' as ffi;
 import 'dart:io' show Platform;
 
 import 'package:flutter/cupertino.dart';
 
-typedef LibLoader = DynamicLibrary Function(String libName);
+typedef LibLoader = ffi.DynamicLibrary Function(String libName);
 
 class DynamicLibraryHelp {
   DynamicLibraryHelp._();
   static LibLoader libLoader;
-  static final Map<String, DynamicLibrary> _libs = <String, DynamicLibrary>{};
+  static final Map<String, ffi.DynamicLibrary> _libs = <String, ffi.DynamicLibrary>{};
 
-  static DynamicLibrary load(String libName) {
+  static ffi.DynamicLibrary load(String libName) {
     String fullLibName = 'lib$libName.so';
     if (Platform.isIOS || Platform.isMacOS) {
       fullLibName = '$libName.framework/$libName';
@@ -23,7 +23,7 @@ class DynamicLibraryHelp {
       if (libLoader != null) {
         _libs[fullLibName] = libLoader(fullLibName);
       } else {
-        _libs[fullLibName] = DynamicLibrary.open(fullLibName);
+        _libs[fullLibName] = ffi.DynamicLibrary.open(fullLibName);
       }
     }
     return _libs[fullLibName];

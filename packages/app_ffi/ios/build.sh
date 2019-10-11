@@ -37,6 +37,15 @@ function get_codesign_id(){
   fi
   echo "$identity"
 }
+function get_files_hash(){
+  local temp_zip="${TMPDIR}app_ffi/cpp.zip"
+  rm -rf $temp_zip
+  mkdir -p `dirname $temp_zip`
+  zip -r1q $temp_zip $CMAKE_DIR
+  local hash=`md5 -q $temp_zip`
+  rm -rf $temp_zip
+  echo $hash
+}
 function build_cmake_ios() {
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
@@ -51,6 +60,7 @@ function build_cmake_ios() {
 }
 function build_cmake_macos() {
       local identity=`get_codesign_id`
+      local hash=`get_files_hash`
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
@@ -60,6 +70,7 @@ function build_cmake_macos() {
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
       -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
       popd
+      echo $hash > "${BUILD_DIR}/files_hash.txt"
 }
 
 # @Deprecated
@@ -119,6 +130,9 @@ function main(){
   args="${@#$cmd}"
   clean
   case ${cmd} in
+      "files_hash")
+        get_files_hash
+      ;;
       "build"|*)
         build_framework ${args}
       ;;

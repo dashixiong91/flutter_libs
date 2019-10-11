@@ -1,4 +1,4 @@
-import 'dart:ffi';
+import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'package:app_ffi/app_ffi.dart';
 import 'package:flutter/foundation.dart';
@@ -11,9 +11,29 @@ final String projectRoot = Directory.current.path.endsWith('test')
 void buildTestLib() {
   String buildScriptPath = '$projectRoot/ios/build.sh';
   ProcessResult result = Process.runSync(buildScriptPath, <String>['build', 'cmake', 'macOS']);
-  if (result.stderr.toString().isNotEmpty) {
-    throw result.stderr.toString();
+  String buildError=result.stderr.toString();
+  if (buildError.isNotEmpty) {
+    debugPrint(buildError);
+    throw 'buildTestLib Error';
   }
+}
+bool isNeedBuildTestLib() {
+  String lastHashFile='$projectRoot/build/macos/files_hash.txt';
+  if(!File(lastHashFile).existsSync()){
+    return true;
+  }
+  ProcessResult lastHashResult =Process.runSync('cat', <String>[lastHashFile]);
+  if (lastHashResult.stderr.toString().isNotEmpty) {
+    return true;
+  }
+  String buildScriptPath = '$projectRoot/ios/build.sh';
+  ProcessResult filesHashResult = Process.runSync(buildScriptPath, <String>['files_hash']);
+  String buildError=filesHashResult.stderr.toString();
+  if (buildError.isNotEmpty) {
+    debugPrint('get files hash Error: $buildError');
+    return true;
+  }
+  return '${filesHashResult.stdout}'!='${lastHashResult.stdout}';
 }
 
 LibLoader testLibLoader = (String libName) {
@@ -25,12 +45,13 @@ LibLoader testLibLoader = (String libName) {
     libPath = '/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore';
   } else {
     libPath = '$projectRoot/build/macos/lib/$libName';
-    if (!File(libPath).existsSync()) {
+    if(!File(libPath).existsSync()||isNeedBuildTestLib()){
+      debugPrint('testLib: Rebuild lib for test...');
       buildTestLib();
     }
   }
-  debugPrint('testLibLoader:$libPath');
-  return DynamicLibrary.open(libPath);
+  debugPrint('testLib: $libPath');
+  return ffi.DynamicLibrary.open(libPath);
 };
 
 void testSetUp() {

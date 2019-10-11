@@ -1,4 +1,4 @@
 
-export './src/bindings/app-ffi.dart';
-export './src/bindings/lib.dart';
+export './src/bindings/bindings.dart';
 export './src/utils/dylib.dart';
+export './src/utils/ffi.dart';
