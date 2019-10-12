@@ -65,7 +65,7 @@ function build_cmake_macos() {
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
       -DTARGET_SYSTEM_NAME=macOS \
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.10 \
       -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
       -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
