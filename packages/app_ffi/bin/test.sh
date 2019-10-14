@@ -11,7 +11,7 @@ sh "${THIS_DIR}/build.sh"
 sh "${FLUTTER_PROJECT_ROOT}/cpp/test/test.sh"
 
 # build test lib for run `flutter test`
-sh "${FLUTTER_PROJECT_ROOT}/ios/build.sh build cmake macOS"
+sh "${FLUTTER_PROJECT_ROOT}/ios/build.sh" build cmake macOS
 pushd ${FLUTTER_PROJECT_ROOT}
 flutter test
 popd
