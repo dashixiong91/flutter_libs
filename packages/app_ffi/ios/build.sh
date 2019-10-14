@@ -24,7 +24,7 @@ function get_codesign_id(){
     echo "$CODE_SIGN_IDENTITY"
     return
   fi
-  local cert_id=`security find-identity -p codesigning -v | grep 'Developer' | awk 'NR==1' | awk -F '[()]' '{print $3}'`
+  local cert_id=`security find-identity -p codesigning -v | grep 'Apple Development' | awk 'NR==1' | awk -F '[()]' '{print $3}'`
   if [[ -z $cert_id ]];then
     echo -e "\033[31m ERROR: can not find a valid Developer Cert !!! \033[0m"
     exit 1
@@ -41,12 +41,13 @@ function get_files_hash(){
   local temp_zip="${TMPDIR}app_ffi/cpp.zip"
   rm -rf $temp_zip
   mkdir -p `dirname $temp_zip`
-  zip -r1q $temp_zip $CMAKE_DIR
+  zip -r1qX $temp_zip $CMAKE_DIR
   local hash=`md5 -q $temp_zip`
   rm -rf $temp_zip
   echo $hash
 }
 function build_cmake_ios() {
+      local identity=`get_codesign_id`
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
@@ -55,7 +56,8 @@ function build_cmake_ios() {
       -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 \
       -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-      -DCMAKE_IOS_INSTALL_COMBINED=YES
+      -DCMAKE_IOS_INSTALL_COMBINED=YES \
+      -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
       popd
 }
 function build_cmake_macos() {
@@ -132,6 +134,9 @@ function main(){
   case ${cmd} in
       "files_hash")
         get_files_hash
+      ;;
+      "codesign_id")
+        get_codesign_id
       ;;
       "build"|*)
         build_framework ${args}
