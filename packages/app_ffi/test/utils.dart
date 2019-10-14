@@ -18,7 +18,7 @@ void buildTestLib() {
   }
 }
 bool isNeedBuildTestLib() {
-  String lastHashFile='$projectRoot/build/macos/files_hash.txt';
+  String lastHashFile='$projectRoot/build/macos/build_hash.txt';
   if(!File(lastHashFile).existsSync()){
     return true;
   }

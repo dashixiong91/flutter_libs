@@ -62,7 +62,6 @@ function build_cmake_ios() {
 }
 function build_cmake_macos() {
       local identity=`get_codesign_id`
-      local hash=`get_files_hash`
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
@@ -72,7 +71,6 @@ function build_cmake_macos() {
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
       -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
       popd
-      echo $hash > "${BUILD_DIR}/files_hash.txt"
 }
 
 # @Deprecated
@@ -117,6 +115,7 @@ function build_framework_by_pod() {
 function build_framework() {
   local build_type="$1"
   local build_target="${2:-iOS}"
+  local build_hash=`get_files_hash`
   if [[ "${build_type}" == "cmake" ]];then
     build_framework_by_cmake ${build_target}
     echo -e "\033[36m BUILD SUCCESSFUL (${build_target}) ========= \033[0m"
@@ -124,6 +123,7 @@ function build_framework() {
     build_framework_by_pod ${build_target}
     echo -e "\033[36m BUILD SUCCESSFUL (iOS) ========= \033[0m"
   fi
+  echo $build_hash > "${BUILD_DIR}/build_hash.txt"
 }
 
 function main(){
