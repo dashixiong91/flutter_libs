@@ -52,11 +52,12 @@ function build_cmake_ios() {
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
       -DCMAKE_SYSTEM_NAME=iOS \
-      "-DCMAKE_OSX_ARCHITECTURES=armv7;armv7s;arm64;i386;x86_64" \
+      "-DCMAKE_OSX_ARCHITECTURES=armv7;armv7s;arm64;arm64e;x86_64" \
       -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 \
       -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
       -DCMAKE_IOS_INSTALL_COMBINED=YES \
       -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
+      -DCMAKE_XCODE_ATTRIBUTE_SUPPORTS_MACCATALYST=NO \
       -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
       popd
 }
