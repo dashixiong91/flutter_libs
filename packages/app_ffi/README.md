@@ -49,7 +49,7 @@ dependencies:
 ./bin/build.sh
 ```
 
-4. run unit test (Make sure SIP is disabled!!! [disable SIP](https://jingyan.baidu.com/article/f0e83a255eea0622e591013d.html))
+4. run unit test
 
 ```
 ./bin/test.sh
