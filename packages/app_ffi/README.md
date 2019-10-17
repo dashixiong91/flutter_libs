@@ -17,7 +17,8 @@ A flutter-ffi template,provide flutter-ffi template code in Flutter (c/c++ build
 - cmake (>= 3.15.3 `brew install cmake`)
 
 3. add dependencie for your app
-```
+
+```yaml
 dependencies:
   flutter:
     sdk: flutter
@@ -31,26 +32,26 @@ dependencies:
 
 1. build iOS app_ffi.framework
 
-```
+```shell
 ./ios/build.sh
 # output to ./build/ios
 ```
 
 2. build Android app_ffi.aar
 
-```
+```shell
 ./android/build.sh
 # output to ./build/android and ./build/android_native_build
 ```
 
 3. build all (above Android and iOS build)
 
-```
+```shell
 ./bin/build.sh
 ```
 
 4. run unit test
 
-```
+```shell
 ./bin/test.sh
 ```
