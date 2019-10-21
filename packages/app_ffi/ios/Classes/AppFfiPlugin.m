@@ -1,8 +1,20 @@
 #import "AppFfiPlugin.h"
 
-// 考虑到此插件仅仅支持作为ffi的模板项目，并不实际需要插件的能力，所以删除了默认的代码
 @implementation AppFfiPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  
+  FlutterMethodChannel* channel = [FlutterMethodChannel
+      methodChannelWithName:@"app_ffi"
+            binaryMessenger:[registrar messenger]];
+  AppFfiPlugin* instance = [[AppFfiPlugin alloc] init];
+  [registrar addMethodCallDelegate:instance channel:channel];
 }
+
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+  if ([@"getPlatformVersion" isEqualToString:call.method]) {
+    result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+  } else {
+    result(FlutterMethodNotImplemented);
+  }
+}
+
 @end
