@@ -42,6 +42,15 @@ class FlutterPlatformPlugin implements Plugin<Project> {
                         }
                     }
                 }
+                profile {
+                    initWith buildTypes.release
+                    if (!isSplitPerAbi) {
+                        ndk {
+                            def profileAbiFilter=buildAbiFilters.clone()
+                            setAbiFilters(profileAbiFilter)
+                        }
+                    }
+                }
                 debug {
                     initWith buildTypes.debug
                     if (!isSplitPerAbi) {
