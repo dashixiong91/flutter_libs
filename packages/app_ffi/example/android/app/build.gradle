@@ -21,11 +21,16 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+ext {
+    supportArmeabi = 1
+}
+
 apply plugin: 'com.android.application'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-// 通过接收`flutter build `的 --target-platform 参数来过滤不同架构下的so文件，达到缩小包体积的目的
-//（此问题应该由宿主app开发人员来考虑，仅在example中提供参考）
-apply from: "${rootProject.childProjects['app_ffi'].projectDir}/gradle/flutter-platform.gradle"
+// apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+// TODO(qianxinfeng): There is a bug in the gradle script in flutter@1.10.14 sdk, here first use the replacement of flutter@1.9.1+hotfix.2 
+apply from: "${rootProject.projectDir}/gradle/flutter.gradle"
+// Filter the so files in different architectures by receiving the --target-platform parameter of `flutter build ` to reduce the volume of the package. 
+apply from: "${rootProject.projectDir}/gradle/flutter-platform.gradle"
 
 android {
     compileSdkVersion 28
