@@ -2,16 +2,23 @@
 set -e
 
 THIS_DIR="$(cd "$(if [[ "${0:0:1}" == "/" ]]; then echo "$(dirname $0)";else echo "$PWD/$(dirname $0)";fi)"; pwd)"
+PROJECT_ROOT="$THIS_DIR/.."
 
-FLUTTER_PROJECT_ROOT="$THIS_DIR/.."
-
-# test build Android and iOS lib
+echo "[test]run Android and iOS lib build"
 sh "${THIS_DIR}/build.sh"
-# run cpp unit test
-sh "${FLUTTER_PROJECT_ROOT}/cpp/test/test.sh"
 
+echo "[test]run cpp unit test"
+sh "${PROJECT_ROOT}/cpp/test/test.sh"
+
+echo "[test]run flutter unit test"
 # build test lib for run `flutter test`
-sh "${FLUTTER_PROJECT_ROOT}/ios/build.sh" build cmake macOS
-pushd ${FLUTTER_PROJECT_ROOT}
-flutter test
+sh "${PROJECT_ROOT}/ios/build.sh" build cmake macOS
+pushd ${PROJECT_ROOT}
+  flutter test
+popd
+
+echo "[test]run app_ffi-example build"
+pushd ${PROJECT_ROOT}/example
+  flutter build apk --debug --target-platform=android-arm
+  flutter build ios --debug --no-codesign
 popd
