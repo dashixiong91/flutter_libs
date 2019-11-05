@@ -4,6 +4,8 @@ set -e
 THIS_DIR="$(cd "$(if [[ "${0:0:1}" == "/" ]]; then echo "$(dirname $0)";else echo "$PWD/$(dirname $0)";fi)"; pwd)"
 PROJECT_ROOT="$THIS_DIR/.."
 
+sh "${THIS_DIR}/init.sh"
+
 echo "[test]run Android and iOS lib build"
 sh "${THIS_DIR}/build.sh"
 
