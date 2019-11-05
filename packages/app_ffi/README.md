@@ -25,33 +25,66 @@ dependencies:
   app_ffi:
     git:
       url: https://github.com/xinfeng-tech/flutter_libs.git
-      path: packages/app_ffi  
+      path: packages/app_ffi 
+```
+
+4. note
+> If you use app_ffi as static library on iOS platform, please add bellow code before any use of app_ffi:
+
+```dart
+DynamicLibraryHelp.libLoader = DynamicLibraryHelp.staticLibLoader;
 ```
 
 ## For FFI Lib Developer
 
-1. build iOS app_ffi.framework
+- install yarn
+```shell
+brew install yarn
+```
+
+- init project
 
 ```shell
-./ios/build.sh
+yarn
+# or yarn install
+```
+
+- build iOS app_ffi.framework
+
+```shell
+yarn build:ios
 # output to ./build/ios
 ```
 
-2. build Android app_ffi.aar
+- build Android app_ffi.aar
 
 ```shell
-./android/build.sh
-# output to ./build/android and ./build/android_native_build
+yarn build:android
+# output to ./build/android 
+# and ./build/android_native_build
 ```
 
-3. build all (above Android and iOS build)
+- build all (above Android and iOS build)
 
 ```shell
-./bin/build.sh
+yarn build
 ```
 
-4. run unit test
+- run unit test
 
 ```shell
-./bin/test.sh
+yarn test
+```
+
+- commit code
+
+```shell
+yarn commit
+```
+
+- publish a new version
+
+```shell
+# auto update CHANGELOG.md file
+yarn version
 ```
