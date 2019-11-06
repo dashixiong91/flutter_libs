@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+
 apply plugin: FlutterPlatformPlugin
 
 class FlutterPlatformPlugin implements Plugin<Project> {
@@ -8,6 +11,7 @@ class FlutterPlatformPlugin implements Plugin<Project> {
     private static final String PLATFORM_X86_64 = "android-x64";
 
     // The ABI architectures.
+    private static final String ARCH_ARMV6 = "armeabi";
     private static final String ARCH_ARM32 = "armeabi-v7a";
     private static final String ARCH_ARM64 = "arm64-v8a";
     private static final String ARCH_X86 = "x86";
@@ -26,10 +30,26 @@ class FlutterPlatformPlugin implements Plugin<Project> {
             PLATFORM_ARM32,
             PLATFORM_ARM64,
     ]
+
+    // nothing to do
+    private static final int ARMEABI_STRATEGY_NONE = 0;
+    // copy v7 to v6 when v6 is not exist
+    private static final int ARMEABI_STRATEGY_COPY = 1;
+    // copy v7 to v6 when v6 is not exist, and delete all v7
+    private static final int ARMEABI_STRATEGY_MOVE = 2;
+    // copy v7 to v6, and delete all v7
+    private static final int ARMEABI_STRATEGY_OVERRIDE = 3;
+
+    private Project project;
+    private int armeabiStrategy = ARMEABI_STRATEGY_NONE;
+
     @Override
     void apply(Project project) {
-        Set<String> buildAbiFilters = getABIs(project)
-        Boolean isSplitPerAbi = isSplitPerAbi(project)
+        this.project = project;
+        this.armeabiStrategy = getArmeabiStrategy();
+        Set<String> abiFilters = getAbiFilters()
+        Boolean isSplitPerAbi = isSplitPerAbi()
+        this.supportArmeabi(abiFilters)
 
         project.android {
             buildTypes {
@@ -37,7 +57,7 @@ class FlutterPlatformPlugin implements Plugin<Project> {
                     initWith buildTypes.release
                     if (!isSplitPerAbi) {
                         ndk {
-                            def releaseAbiFilter=buildAbiFilters.clone()
+                            def releaseAbiFilter = abiFilters.clone()
                             setAbiFilters(releaseAbiFilter)
                         }
                     }
@@ -46,7 +66,7 @@ class FlutterPlatformPlugin implements Plugin<Project> {
                     initWith buildTypes.release
                     if (!isSplitPerAbi) {
                         ndk {
-                            def profileAbiFilter=buildAbiFilters.clone()
+                            def profileAbiFilter = abiFilters.clone()
                             setAbiFilters(profileAbiFilter)
                         }
                     }
@@ -55,8 +75,8 @@ class FlutterPlatformPlugin implements Plugin<Project> {
                     initWith buildTypes.debug
                     if (!isSplitPerAbi) {
                         ndk {
-                            def debugAbiFilter=buildAbiFilters.clone()
-                            debugAbiFilter.addAll([ARCH_X86,ARCH_X86_64])
+                            def debugAbiFilter = abiFilters.clone()
+                            debugAbiFilter.addAll([ARCH_X86])
                             setAbiFilters(debugAbiFilter)
                         }
                     }
@@ -65,21 +85,21 @@ class FlutterPlatformPlugin implements Plugin<Project> {
         }
     }
 
-    private static Set<String> getABIs(Project project) {
-        Set<String> targetPlatforms = getTargetPlatforms(project)
+    private Set<String> getAbiFilters() {
+        Set<String> targetPlatforms = getTargetPlatforms()
         return targetPlatforms.collect {
             return PLATFORM_ARCH_MAP[it]
         }
     }
 
-    private static Boolean isSplitPerAbi(Project project) {
+    private Boolean isSplitPerAbi() {
         if (project.hasProperty('split-per-abi')) {
             return project.property('split-per-abi').toBoolean()
         }
         return false;
     }
 
-    private static Set<String> getTargetPlatforms(Project project) {
+    private Set<String> getTargetPlatforms() {
         if (!project.hasProperty('target-platform')) {
             return DEFAULT_PLATFORMS
         }
@@ -89,5 +109,98 @@ class FlutterPlatformPlugin implements Plugin<Project> {
             }
             return it
         }.toSet()
+    }
+
+    private int getArmeabiStrategy() {
+        int result = ARMEABI_STRATEGY_NONE
+        if (isSplitPerAbi()) {
+            return result
+        }
+        if (project.hasProperty('support-armeabi')) {
+            result = new Integer(project.property('support-armeabi'))
+        }
+        def armeabiStrategy = project['ext'].properties['supportArmeabi']
+        if (armeabiStrategy != null) {
+            result = new Integer(armeabiStrategy);
+        }
+        if (result > ARMEABI_STRATEGY_OVERRIDE || result < ARMEABI_STRATEGY_NONE) {
+            result = ARMEABI_STRATEGY_NONE;
+        }
+        return result;
+    }
+
+    private void updateByVariant(Action action) {
+        if (project.android.hasProperty("applicationVariants")) {
+            project.android.applicationVariants.all action
+        } else {
+            project.android.libraryVariants.all action
+        }
+    }
+
+    private void supportArmeabi(Set<String> abiFilters) {
+        if (armeabiStrategy == ARMEABI_STRATEGY_NONE) {
+            return
+        }
+        // add armeabi when abiFilters contains armeabi-v7a
+        if (abiFilters.contains(ARCH_ARM32)) {
+            abiFilters.add(ARCH_ARMV6)
+        }
+        def action = { variant ->
+            this.createArmeabiV7aToArmeabiTask(variant)
+        }
+        project.afterEvaluate({
+            this.updateByVariant(action)
+        })
+    }
+
+    // armeabi-v7a -> armeabi
+    private void createArmeabiV7aToArmeabiTask(def variant) {
+        def variantName = variant.name.capitalize()
+        def transformNativeLibsTaskName = "transformNativeLibsWithStripDebugSymbolFor${variantName}"
+        Task transformNativeLibsTask = project.tasks.findByName(transformNativeLibsTaskName)
+        if (transformNativeLibsTask == null) {
+            throw new GradleException("Can not find Task:${transformNativeLibsTaskName} !!!")
+        }
+        Task supportArmeabiTask = project.task("supportArmeabiFor${variantName}")
+        supportArmeabiTask.doLast("support", {
+            def outputDir = new File(transformNativeLibsTask.getOutputs().files.singleFile, "0/lib")
+            def v7aLibFileRootDir = new File(outputDir, "armeabi-v7a");
+            if (!v7aLibFileRootDir.exists()) {
+                return
+            }
+            def v6LibFileRootDir = new File(outputDir, "armeabi")
+            if (!v6LibFileRootDir.exists()) {
+                Files.createDirectory(v6LibFileRootDir.toPath())
+            }
+            def v7aLibFiles = v7aLibFileRootDir.listFiles(new FilenameFilter() {
+                @Override
+                boolean accept(File file, String name) {
+                    return name.endsWith(".so")
+                }
+            })
+            v7aLibFiles.each { file ->
+                def v6LibFile = new File(v6LibFileRootDir, file.name)
+                if ([ARMEABI_STRATEGY_COPY, ARMEABI_STRATEGY_MOVE].contains(armeabiStrategy)) {
+                    if (!v6LibFile.exists()) {
+                        Files.copy(file.toPath(), v6LibFile.toPath())
+                    }
+                } else {
+                    Files.copy(file.toPath(), v6LibFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                }
+            }
+
+        })
+
+        supportArmeabiTask.doLast("checkRemoveArmeabiV7a", {
+            def v7aLibFileRootDir = new File(transformNativeLibsTask.getOutputs().files.singleFile, "0/lib/armeabi-v7a")
+            if (v7aLibFileRootDir.exists() && [ARMEABI_STRATEGY_MOVE, ARMEABI_STRATEGY_OVERRIDE].contains(armeabiStrategy)) {
+                project.exec {
+                    workingDir project.projectDir
+                    commandLine "rm", "-rf", v7aLibFileRootDir.path
+                }
+            }
+        })
+
+        transformNativeLibsTask.finalizedBy supportArmeabiTask
     }
 }
