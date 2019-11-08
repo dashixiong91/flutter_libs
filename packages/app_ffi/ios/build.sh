@@ -24,56 +24,70 @@ function get_codesign_id(){
     echo "$CODE_SIGN_IDENTITY"
     return
   fi
-  local cert_id=`security find-identity -p codesigning -v | grep 'Developer' | awk 'NR==1' | awk -F '[()]' '{print $3}'`
-  if [[ -z $cert_id ]];then
-    echo -e "\033[31m ERROR: can not find a valid Developer Cert !!! \033[0m"
+  local cert_identity=`security find-identity -p codesigning -v | grep 'Apple Development' | awk 'NR==1' | awk -F '"' '{print $2}'`
+  if [[ -z $cert_identity ]];then
+    echo -e "\033[31m ERROR: can not find a valid Developer Cert IDENTITY !!! \033[0m"
     exit 1
   fi
-  local cert_content=`security find-certificate -c ${cert_id} -p`
-  local identity=`security find-certificate -c ${cert_id} -p | openssl x509 -subject | awk 'NR==1' | awk -F 'OU=' '{print $2}' | awk -F '/' '{print $1}'`
-  if [[ -z $identity ]];then
-    echo -e "\033[31m ERROR: can not find a IDENTITY to sign code !!! \033[0m"
+  echo "${cert_identity}"
+}
+function get_codesign_team_id(){
+  local cert_num=`get_codesign_id | awk -F '[()]' '{print $2}'`
+  if [[ -z $cert_num ]];then
+    echo -e "\033[31m ERROR: can not find a valid Developer Cert Number !!! \033[0m"
     exit 1
   fi
-  echo "$identity"
+  local cert_content=`security find-certificate -c ${cert_num} -p`
+  local team_id=`security find-certificate -c ${cert_num} -p | openssl x509 -subject | awk 'NR==1' | awk -F 'OU=' '{print $2}' | awk -F '/' '{print $1}'`
+  if [[ -z $team_id ]];then
+    echo -e "\033[31m ERROR: can not find a Developer Team ID to sign code !!! \033[0m"
+    exit 1
+  fi
+  echo "$team_id"
 }
 function get_files_hash(){
   local temp_zip="${TMPDIR}app_ffi/cpp.zip"
   rm -rf $temp_zip
   mkdir -p `dirname $temp_zip`
-  zip -r1q $temp_zip $CMAKE_DIR
+  zip -r1qX $temp_zip $CMAKE_DIR
   local hash=`md5 -q $temp_zip`
   rm -rf $temp_zip
   echo $hash
 }
 function build_cmake_ios() {
+      local team_id=`get_codesign_team_id`
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
       cmake -S "${CMAKE_DIR}" -GXcode  \
-      -DCMAKE_SYSTEM_NAME=iOS \
-      "-DCMAKE_OSX_ARCHITECTURES=armv7;armv7s;arm64;i386;x86_64" \
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=8.0 \
+      -DCMAKE_SYSTEM_NAME="iOS" \
+      -DCMAKE_OSX_ARCHITECTURES="armv7;armv7s;arm64;arm64e;x86_64" \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET="8.0" \
       -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
-      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-      -DCMAKE_IOS_INSTALL_COMBINED=YES
+      -DCMAKE_IOS_INSTALL_COMBINED="YES" \
+      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH="NO" \
+      -DCMAKE_XCODE_ATTRIBUTE_SUPPORTS_MACCATALYST="NO" \
+      -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="${team_id}"
       popd
+}
+function codesign_flutter_tester() {
+  local identity=`get_codesign_id`
+  local flutter_tester="$FLUTTER_ROOT/bin/cache/artifacts/engine/darwin-x64/flutter_tester"
+  codesign --force --verbose --sign "${identity}" -- "${flutter_tester}"
 }
 function build_cmake_macos() {
-      local identity=`get_codesign_id`
-      local hash=`get_files_hash`
+      local team_id=`get_codesign_team_id`
       mkdir -p ${BUILD_DIR}
       pushd "${BUILD_DIR}"
-      cmake -S "${CMAKE_DIR}" -GXcode  \
-      -DTARGET_SYSTEM_NAME=macOS \
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=10.9 \
+      cmake -S "${CMAKE_DIR}" -GXcode \
+      -DTARGET_SYSTEM_NAME="macOS" \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET="10.10" \
       -DCMAKE_INSTALL_PREFIX="${BUILD_DIR}" \
-      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-      -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=${identity}
+      -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH="NO" \
+      -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="${team_id}"
       popd
-      echo $hash > "${BUILD_DIR}/files_hash.txt"
+      codesign_flutter_tester
 }
 
-# @Deprecated
 function build_framework_by_cmake() {
   local build_target="$1"
   if [[ "${build_target}" == "macOS" ]];then
@@ -115,6 +129,7 @@ function build_framework_by_pod() {
 function build_framework() {
   local build_type="$1"
   local build_target="${2:-iOS}"
+  local build_hash=`get_files_hash`
   if [[ "${build_type}" == "cmake" ]];then
     build_framework_by_cmake ${build_target}
     echo -e "\033[36m BUILD SUCCESSFUL (${build_target}) ========= \033[0m"
@@ -122,6 +137,7 @@ function build_framework() {
     build_framework_by_pod ${build_target}
     echo -e "\033[36m BUILD SUCCESSFUL (iOS) ========= \033[0m"
   fi
+  echo $build_hash > "${BUILD_DIR}/build_hash.txt"
 }
 
 function main(){
@@ -132,6 +148,12 @@ function main(){
   case ${cmd} in
       "files_hash")
         get_files_hash
+      ;;
+      "codesign_id")
+        get_codesign_id
+      ;;
+      "codesign_team_id")
+        get_codesign_team_id
       ;;
       "build"|*)
         build_framework ${args}

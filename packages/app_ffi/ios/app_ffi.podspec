@@ -15,7 +15,9 @@ Provide flutter-ffi template code in Flutter (c/c++ build and dart wrapper)
   s.source_files =  ['Classes/**/*', 'cpp/src/**/*.{h,c,cc}','cpp/include/*.h']
   s.public_header_files = ['Classes/**/*.h','cpp/include/*.h']
   s.dependency 'Flutter'
+  s.platform = :ios, '8.0'
 
-  s.ios.deployment_target = '8.0'
+  # Flutter.framework does not contain a i386 slice. Only x86_64 simulators are supported.
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end
 

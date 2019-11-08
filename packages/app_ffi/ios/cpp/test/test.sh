@@ -12,6 +12,7 @@ function clean(){
 }
 function build_test(){
   mkdir -p ${BUILD_DIR}
+  local is_all_passed=true
   pushd ${THIS_DIR}
     for file in `ls -1A *_test.cc`
     do
@@ -21,19 +22,27 @@ function build_test(){
       clang++ $file ${SOURCE_DIR}/*.cc -I ${INCLUDE_DIR} -o ${out_file}
       set -e
       if [[ ! -f ${out_file} ]];then
+        is_all_passed=false
         echo -e "\033[31m test[${file}]: not pass! \033[0m"
       else
         set +e
         ${out_file}
         if [[ $? != 0 ]];then
+          is_all_passed=false
           echo -e "\033[31m test[${file}]: not pass! \033[0m"
-          exit 1
+        else
+          echo -e "\033[32m test[${file}]: pass! \033[0m"
         fi
-        echo -e "\033[32m test[${file}]: pass! \033[0m"
         set -e
       fi
     done
   popd
+  if [ $is_all_passed == true ];then
+    echo -e "\033[32m All tests passed! \033[0m"
+  else
+    echo -e "\033[31m Some tests not passed!!! \033[0m"
+    exit 1
+  fi
 }
 function main(){
   clean

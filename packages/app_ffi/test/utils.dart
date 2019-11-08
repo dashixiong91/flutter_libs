@@ -18,7 +18,7 @@ void buildTestLib() {
   }
 }
 bool isNeedBuildTestLib() {
-  String lastHashFile='$projectRoot/build/macos/files_hash.txt';
+  String lastHashFile='$projectRoot/build/macos/build_hash.txt';
   if(!File(lastHashFile).existsSync()){
     return true;
   }
@@ -45,6 +45,7 @@ LibLoader testLibLoader = (String libName) {
     libPath = '/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore';
   } else {
     libPath = '$projectRoot/build/macos/lib/$libName';
+    // FIXME(qianxinfeng): test case is run at same time,test lib will build multi time
     if(!File(libPath).existsSync()||isNeedBuildTestLib()){
       debugPrint('testLib: Rebuild lib for test...');
       buildTestLib();
