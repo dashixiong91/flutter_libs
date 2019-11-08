@@ -5,7 +5,7 @@
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS" OR TARGET_SYSTEM_NAME STREQUAL "macOS")
 cmake_minimum_required(VERSION 3.15)
 else()
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.6)
 endif()
 
 # set project name
