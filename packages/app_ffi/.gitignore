@@ -1,7 +1,31 @@
+# temp files
+*.log
+*.bak
+*.swp
 .DS_Store
-.dart_tool/
+.svn/
 
+# flutter temp file
+.dart_tool/
 .packages
 .pub/
-
 build/
+coverage/
+
+# jetbrain ide files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# node poj files
+node_modules
+
+# eclipse poj files
+.classpath
+.project
+.cproject
+.settings/
+
+# vscode setting
+.vscode/settings.json
