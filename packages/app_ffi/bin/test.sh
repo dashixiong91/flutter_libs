@@ -23,6 +23,5 @@ echo "[test]run app_ffi-example build"
 pushd ${PROJECT_ROOT}/example
   flutter clean
   flutter build apk --target-platform=android-arm
-  # TODO(qianxinfeng): iOS release mode cannot be build successfully under current flutter@1.10.14, temporarily only check debug mode
-  flutter build ios --debug --no-codesign
+  flutter build ios --no-codesign
 popd
